@@ -24,7 +24,7 @@ pipeline {
         }
         stage ("plan") {
             steps {
-                sh ('terraform plan') 
+                sh ('terraform plan -out=plan.tf') 
             }
         }
         
@@ -39,7 +39,7 @@ pipeline {
         stage (" Action") {
             steps {
                 echo "Terraform action is --> ${action}"
-                sh ('terraform ${action} --auto-approve') 
+                sh ('terraform ${action} --auto-approve -input=false -no-color plan.tf') 
            }
         }
     }
