@@ -21,13 +21,13 @@ resource "aws_instance" "ec2_instance" {
         #! /bin/bash
         sudo apt-get update
         sudo apt install unzip
-        sudo apt-add-repository ppa:ansible/ansible
+        sudo apt-add-repository ppa:ansible/ansible -y
         sudo apt update
         sudo apt install ansible -y
         sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         sudo unzip awscliv2.zip
         sudo ./aws/install
-  EOF
+   EOF
   tags                      = {
     Name = "Testing"
   }
