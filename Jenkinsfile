@@ -31,7 +31,7 @@ pipeline {
         stage('Approval') {
             steps {
                 script {
-                def userInput = input(parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'can we proceed?',name: 'confirm'] ])
+                def userInput = input(parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'can we proceed for ${action}?',name: 'confirm'] ])
                 }
             }
         }
