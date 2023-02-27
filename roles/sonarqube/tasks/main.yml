@@ -1,0 +1,163 @@
+---
+  - name: Update and refresh your Ubuntu package index repository
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+  - name: Install the Java OpenJDK v11
+    shell: sudo apt install default-jdk -y
+
+####### Installing PostgreSQL Database System ############
+
+  - name: Add the GPG key of the PostgreSQL repository
+    shell: wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+
+  - name: Add the PostgreSQL repository
+    shell: sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+
+  - name: Update and Refresh your ubuntu package
+    shell: sudo apt update
+
+  - name: Install the PostgreSQL database v13
+    shell: sudo apt install postgresql-13 -y
+
+  - name: Check postgresql is enabled
+    shell: sudo systemctl is-enabled postgresql
+
+  - name: Change permission of db-setup script
+    shell: chmod -R 700 /home/ubuntu/sonarqube/roles/sonarqube/templates/db-setup.sh
+
+  - name: Run db-setup script
+    command: sudo ./db-setup.sh
+    args:
+      chdir: /home/ubuntu/sonarqube/roles/sonarqube/templates
+
+  - name: Create a new user 'sonarqube' on your system
+    shell: sudo useradd -b /opt/sonarqube -s /bin/bash sonarqube
+    ignore_errors: True
+
+  - name: update a file sysctl.conf
+    blockinfile:
+      dest: /etc/sysctl.conf
+      block: |
+        vm.max_map_count=524288
+        fs.file-max=131072
+
+  - name: Create a file of 99-sonarqube.conf
+    shell: sudo touch /etc/security/limits.d/99-sonarqube.conf
+
+
+  - name: Update a file 99-sonarqube.conf
+    blockinfile:
+      dest: /etc/security/limits.d/99-sonarqube.conf
+      block: |
+        sonarqube   -   nofile   131072
+        sonarqube   -   nproc    8192
+
+  - name: Install pakages unzip,wget
+    shell: sudo apt install unzip software-properties-common wget -y
+
+  - name: Download the SonarQube package
+    command: wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.6.1.59531.zip
+    args:
+      chdir: /home/ubuntu/
+
+  - name: Extract the SonarQube package using the unzip
+    command: sudo unzip sonarqube-9.6.1.59531.zip
+    args:
+      chdir: /home/ubuntu/
+
+  - name: Rename sonarqube in opt directory
+    command: sudo mv sonarqube-9.6.1.59531 /opt/sonarqube
+    args:
+      chdir: /home/ubuntu/
+
+  - name: Change ownership of /opt/sonarqube
+    shell: sudo chown -R sonarqube:sonarqube /opt/sonarqube
+
+  - name: Update sonar.properties file
+    blockinfile:
+      dest: /opt/sonarqube/conf/sonar.properties
+      block: |
+        sonar.jdbc.username=sonarqube
+        sonar.jdbc.password=Password
+        sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube
+        sonar.search.javaOpts=-Xmx512m -Xms512m -XX:MaxDirectMemorySize=256m -XX:+HeapDumpOnOutOfMemoryError
+        sonar.web.host=127.0.0.1
+        sonar.web.port=9000
+        sonar.web.javaAdditionalOpts=-server
+        sonar.log.level=INFO
+        sonar.path.logs=logs
+
+  - name: Create a file of sonar.service
+    shell: touch /etc/systemd/system/sonarqube.service
+
+
+  - name: Update a file sonarqube.service
+    blockinfile:
+      dest: /etc/systemd/system/sonarqube.service
+      block: |
+        [Unit]
+        Description=SonarQube service
+        After=syslog.target network.target
+        [Service]
+        Type=forking
+        ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+        ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+        User=sonarqube
+        Group=sonarqube
+        Restart=always
+        LimitNOFILE=65536
+        LimitNPROC=4096
+        [Install]
+        WantedBy=multi-user.target
+
+  - name: daemon-reload
+    shell: sudo systemctl daemon-reload
+
+  - name: Start sonarqube.service
+    shell: sudo systemctl start sonarqube.service
+
+  - name: Enable sonarqube
+    shell: sudo systemctl enable sonarqube.service
+
+  - name: Install the Nginx web server for your Ubuntu system
+    shell: sudo apt install nginx -y
+
+  - name: Verify the nginx service and make sure the service status is running via the systemctl
+    shell: sudo systemctl is-enabled nginx
+
+  - name: Create a file sonarqube.conf
+    shell: touch /etc/nginx/sites-available/sonarqube.conf
+
+  - name: update a file sonarqube.service
+    blockinfile:
+      dest: /etc/nginx/sites-available/sonarqube.conf
+      block: |
+        server {
+
+            listen 80;
+            server_name 13.127.157.129;
+            access_log /var/log/nginx/sonar.access.log;
+            error_log /var/log/nginx/sonar.error.log;
+            proxy_buffers 16 64k;
+            proxy_buffer_size 128k;
+
+            location / {
+                proxy_pass http://127.0.0.1:9000;
+                proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+                proxy_redirect off;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto http;
+            }
+        }
+
+  - name: Activate the server block configuration 'sonarqube.conf' by creating a symlink of that file to the '/etc/nginx/sites-enabled'
+    shell: sudo ln -s /etc/nginx/sites-available/sonarqube.conf /etc/nginx/sites-enabled/
+    ignore_errors: True
+
+  - name: Verify your Nginx configuration files
+    shell: sudo nginx -t
+
+  - name: Restart the nginx service and apply the new server block configuration
+    shell: sudo systemctl restart nginx
