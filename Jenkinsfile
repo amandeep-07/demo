@@ -3,7 +3,7 @@ pipeline {
     stages {
      stage('Ansible Deploy') {          
             steps {        
-              sh "ansible all -m ping -u ubuntu --private-key /home/ubuntu/ansible-testing.pem"
+              sh "sudo ansible all -m ping -u ubuntu --private-key /home/ubuntu/ansible-testing.pem -y"
             }
      }
     }
