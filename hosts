@@ -42,5 +42,5 @@
 
 ## db-[99:101]-node.example.com
 
-#[testing]
-#172.31.3.246
+[testing]
+172.31.3.246
