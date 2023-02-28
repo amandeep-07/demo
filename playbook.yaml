@@ -1,5 +1,5 @@
 ---
-- hosts: 172.31.14.233
+- hosts: testing
   become: yes
   become_user: root
   become_method: sudo
