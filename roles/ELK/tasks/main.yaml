@@ -1,7 +1,6 @@
 ---
   - name: Update and refresh your Ubuntu package index repository
-    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    shell: sudo apt-get update
 
   - name: Install the nginx
     shell: sudo apt install docker.io -y
-
