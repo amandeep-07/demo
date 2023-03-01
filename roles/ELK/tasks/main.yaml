@@ -3,4 +3,4 @@
     shell: sudo apt-get update
 
   - name: Install the nginx
-    shell: sudo apt install docker.io -y
+    shell: sudo apt-get install apache2 -y
