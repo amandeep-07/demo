@@ -5,3 +5,10 @@
   become_method: sudo
   roles:
     - sonarqube
+- hosts: ELK
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - ELK
+ 
