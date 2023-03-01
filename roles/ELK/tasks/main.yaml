@@ -1,3 +1,7 @@
 ---
- -name: testing
-  shell: apt-get install man
+  - name: Update and refresh your Ubuntu package index repository
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+  - name: Install the nginx
+    shell: sudo apt install docker.io -y
+
