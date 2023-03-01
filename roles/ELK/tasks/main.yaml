@@ -1,0 +1,3 @@
+---
+ -name: testing
+  shell: apt-get install man
