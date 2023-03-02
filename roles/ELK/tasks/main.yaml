@@ -1,6 +1,0 @@
----
-  - name: Update and refresh your Ubuntu package index repository
-    shell: sudo apt-get update
-
-  - name: Install the nginx
-    shell: sudo apt-get install apache2 -y
