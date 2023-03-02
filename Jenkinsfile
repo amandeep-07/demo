@@ -1,4 +1,7 @@
 pipeline {
+   environment {
+        AWS_CREDENTIALS = credentials('jenkins-terraform')
+    }
    agent any
 
     stages {
