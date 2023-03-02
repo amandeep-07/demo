@@ -10,7 +10,7 @@ pipeline {
 
         stage ("Download key from S3") {
             steps {
-                sh ("sudo aws s3 cp s3://amandeep07/raj/${workspace} /home/ubuntu/raj/${workspace}.pem")
+                sh ("sudo aws s3 cp s3://amandeep07/${workspace}/${workspace} /home/ubuntu/raj/${workspace}.pem")
                 sh ("sudo chmod 400 /home/ubuntu/raj/${workspace}.pem ") 
             }
         }
