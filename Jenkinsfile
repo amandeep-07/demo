@@ -16,10 +16,10 @@ pipeline {
         }
         stage ("Download private key and tag from aws and store in hosts file") {
             steps {
-                sh ("sudo aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[Tags[?Key==`Name`].Value[]]' --output text >>/home/ubuntu/hosts")
+                sh ("sudo -u ubuntu aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[Tags[?Key==`Name`].Value[]]' --output text >>/home/ubuntu/hosts")
                 sh ("chmod 777 ansible-host.sh")
                 sh ("./ansible-host.sh")
-                sh ("sudo aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text >>/home/ubuntu/hosts")
+                sh ("sudo -u ubuntu aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text >>/home/ubuntu/hosts")
             }
         }
 
