@@ -1,2 +1,2 @@
 #!/bin/bash
-sed -e '1s/^/[/' -e 's/$/]/' /home/ubuntu/hosts
+sed -e '1s/^/[/' -e 's/$/]/' hosts
