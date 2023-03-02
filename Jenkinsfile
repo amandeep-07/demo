@@ -16,7 +16,7 @@ pipeline {
         }
         stage ("Download tag from aws and store in hosts file") {
             steps {
-                sh ("aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[Tags[?Key==`Name`].Value[]]' --output text >> /home/ubuntu/hosts")
+                sh ("aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[Tags[?Key==`Name`].Value[]]' --output text >> hosts")
             }
         }
          
@@ -29,7 +29,7 @@ pipeline {
        
         stage ("Download Private key") {
             steps {
-                sh ("aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text >> /home/ubuntu/hosts") 
+                sh ("aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=${workspace}' --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text >> hosts") 
             }
         }
         
