@@ -1,0 +1,6 @@
+---
+  - name: update machine
+    shell: sudo apt update 
+    
+  - name: make a directory
+    shell: sudo mkdir cassendra
