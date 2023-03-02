@@ -41,7 +41,7 @@ pipeline {
                 sh ("sudo ansible-playbook playbook.yaml -i hosts -u ubuntu --private-key ${workspace}.pem ") 
             }
         }
-        stage ("Run Playbook") {
+        stage ("Delete key,hosts") {
             steps {
                 sh ("sudo rm ${workspace}.pem hosts tag") 
             }
