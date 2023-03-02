@@ -1,10 +1,10 @@
 ---
-- hosts: Sonarqube
-  become: yes
-  become_user: root
-  become_method: sudo
-  roles:
-    - Sonarqube
+# - hosts: Sonarqube
+#   become: yes
+#   become_user: root
+#   become_method: sudo
+#   roles:
+#     - Sonarqube
     
 - hosts: ELK
   become: yes
@@ -13,16 +13,16 @@
   roles:
     - ELK
         
-- hosts: Cassendra
-  become: yes
-  become_user: root
-  become_method: sudo
-  roles:
-    - Cassendra
+# - hosts: Cassendra
+#   become: yes
+#   become_user: root
+#   become_method: sudo
+#   roles:
+#     - Cassendra
     
-- hosts: Elasticsearch
-  become: yes
-  become_user: root
-  become_method: sudo
-  roles:
-    - Elasticsearch
+# - hosts: Elasticsearch
+#   become: yes
+#   become_user: root
+#   become_method: sudo
+#   roles:
+#     - Elasticsearch
