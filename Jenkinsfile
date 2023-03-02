@@ -13,8 +13,8 @@ pipeline {
 
         stage ("Download key from S3") {
             steps {
-                sh ("sudo aws s3 cp s3://amandeep07/${workspace}/${workspace} /home/ubuntu/raj/${workspace}.pem")
-                sh ("sudo chmod 400 /home/ubuntu/raj/${workspace}.pem ") 
+                sh ("sudo aws s3 cp s3://amandeep07/${workspace}/${workspace} ${workspace}.pem")
+                sh ("sudo chmod 400 ${workspace}.pem ") 
             }
         }
         stage ("Download tag from aws and store in hosts file") {
@@ -38,7 +38,7 @@ pipeline {
         
         stage ("Run Playbook") {
             steps {
-                sh ("sudo ansible-playbook playbook.yaml -i hosts -u ubuntu --private-key /home/ubuntu/${workspace}.pem --check") 
+                sh ("sudo ansible-playbook playbook.yaml -i hosts -u ubuntu --private-key ${workspace}.pem --check") 
             }
         }
     }
