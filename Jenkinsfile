@@ -38,7 +38,12 @@ pipeline {
         
         stage ("Run Playbook") {
             steps {
-                sh ("sudo ansible-playbook playbook.yaml -i hosts -u ubuntu --private-key ${workspace}.pem --check") 
+                sh ("sudo ansible-playbook playbook.yaml -i hosts -u ubuntu --private-key ${workspace}.pem ") 
+            }
+        }
+        stage ("Run Playbook") {
+            steps {
+                sh ("sudo rm ${workspace}.pem hosts tag") 
             }
         }
     }
